@@ -1,11 +1,12 @@
 
-
+# This will list all submodules... we copy to create the list after
 # git submodule foreach "
 #     # git rm --cached \$sm_path;
 #     # rm -rf \$sm_path/.git
 #     echo \$sm_path;
 # "
 
+# This will delete all submodule .git and cached
 all_paths=(
 "arras/arras4_core"
 "arras/arras_render"
