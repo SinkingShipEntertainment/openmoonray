@@ -56,11 +56,11 @@ requires = [
 private_build_requires = [
     'cppunit-1.15.0',
     'ispc-1.14.1',
+    "python-3.9",
 ]
 
 variants = [
-    ["platform-linux", "arch-x86_64", "os-centos-7", 'python-3.7'],
-    ["platform-linux", "arch-x86_64", "os-centos-7", 'python-3.9'],
+    ["platform-linux", "arch-x86_64", "os-centos-7"],
 ]
 
 # If want to use Ninja, run:
