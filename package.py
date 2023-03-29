@@ -36,7 +36,7 @@ requires = [
     'lua',
     'libmicrohttpd-0.9.37',
     'log4cplus-1.1.2',
-    'jsoncpp',
+    'jsoncpp-0.7.0',
     'random123',
     'blosc-1.17.0',
     'tbb-2019.6',

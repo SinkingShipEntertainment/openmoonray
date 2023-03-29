@@ -27,7 +27,7 @@ set(JsonCpp_INCLUDE_DIRS ${JsonCpp_INCLUDE_DIR}/..)
 
 find_library(JsonCpp_LIBRARIES
   NAMES json jsoncpp
-  HINTS $ENV{JSONCPP_ROOT}/lib64 /usr/local/lib)
+  HINTS $ENV{JSONCPP_ROOT}/lib /usr/local/lib)
 mark_as_advanced(JsonCpp_INCLUDE_DIR JsonCpp_INCLUDE_DIRS JsonCpp_LIBRARIES)
 
 include(FindPackageHandleStandardArgs)
