@@ -14,6 +14,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/cmake)
 # Make sure Cuda's bin directory is in ${PATH} so that check_language can find it.
 set(ENV{PATH} "${CUDAToolkit_ROOT}/bin:$ENV{PATH}")
 
+# -----------------------------------
+# NOTE (Marcelo): Missing variables
+set(Qt5Script_DIR $ENV{Qt5Script_DIR})
+# -----------------------------------
+
 include(CheckLanguage)
 check_language(CUDA)
 if(CMAKE_CUDA_COMPILER)

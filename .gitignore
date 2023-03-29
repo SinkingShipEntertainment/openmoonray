@@ -58,3 +58,7 @@ boot
 .src_project*
 .config.xml
 .metadata_src_project
+
+# SSE
+_rez_build
+.vscode

@@ -1,88 +1,92 @@
-# -*- coding: utf-8 -*-
-import os, sys
-
 name = 'openmoonray'
-
-if 'early' not in locals() or not callable(early):
-    def early(): return lambda x: x
-
-@early()
-def version():
-    """
-    Increment the build in the version.
-    """
-    _version = '0.1'
-    from rezbuild import earlybind
-    return earlybind.version(this, _version)
-
-description = 'OpenMoonRay package'
 
 authors = [
     'PSW Rendering and Shading',
     'moonbase-dev@dreamworks.com'
 ]
 
-help = ('For assistance, '
-        "please contact the folio's owner at: moonbase-dev@dreamworks.com")
+# NOTE: version = <ext_version>.sse.<sse_version>
+version = "1.0.0.0.sse.1.0.0"
 
-variants = [
-    ['os-CentOS-7', 'opt_level-optdebug', 'refplat-vfx2020.3', 'gcc-6.3.x.2', 'amorphous-8', 'openvdb-8', 'usd_core-0.20.8.x.2'],
-    ['os-CentOS-7', 'opt_level-debug', 'refplat-vfx2020.3', 'gcc-6.3.x.2', 'amorphous-8', 'openvdb-8', 'usd_core-0.20.8.x.2'],
-    ['os-CentOS-7', 'opt_level-optdebug', 'refplat-vfx2021.0', 'gcc-9.3.x.1', 'amorphous-8', 'openvdb-8', 'usd_core-0.21.8.x.2'],
-    ['os-CentOS-7', 'opt_level-debug', 'refplat-vfx2021.0', 'gcc-9.3.x.1', 'amorphous-8', 'openvdb-8', 'usd_core-0.21.8.x.2'],
-    ['os-CentOS-7', 'opt_level-optdebug', 'refplat-vfx2021.0', 'clang-13', 'gcc-9.3.x.1', 'amorphous-8', 'openvdb-8', 'usd_core-0.21.8.x.2'],
-    ['os-CentOS-7', 'opt_level-optdebug', 'refplat-vfx2022.0', 'gcc-9.3.x.1', 'amorphous-9', 'openvdb-9', 'imath-3', 'usd_core-0.22.5.x'],
-    ['os-CentOS-7', 'opt_level-debug', 'refplat-vfx2022.0', 'gcc-9.3.x.1', 'amorphous-9', 'openvdb-9', 'imath-3', 'usd_core-0.22.5.x'],
-]
+description = 'OpenMoonRay package'
+
+with scope("config") as c:
+    # Determine location to release: internal (int) vs external (ext)
+
+    # NOTE: Modify this variable to reflect the current package situation
+    release_as = "ext"
+
+    # The `c` variable here is actually rezconfig.py
+    # `release_packages_path` is a variable defined inside rezconfig.py
+
+    import os
+    if release_as == "int":
+        c.release_packages_path = os.environ["SSE_REZ_REPO_RELEASE_INT"]
+    elif release_as == "ext":
+        c.release_packages_path = os.environ["SSE_REZ_REPO_RELEASE_EXT"]
+
+    #c.build_thread_count = "physical_cores"
+
+# https://docs.openmoonray.org/getting-started/installation/moonray-dependencies/
 
 requires = [
-    'amorphous',
-    'boost',
-    'cuda-11.3.0.x',
-    'curl_no_ldap-7.49.1',
-    'embree-3.12.1.x.16',
-    'jsoncpp-0.6.0',
-    'libmicrohttpd-0.9.37.x.0',
-    'log4cplus-1.1.2.x.2',
+    # 'mkl',  # can be installed using yum, but want to build from source
+    'embree-3.12.1',
+    'optix_sdk-7.3.0',
     'lua',
-    'mkl',
-    'openexr',
-    'openimagedenoise',
-    'openimageio-2<2.4',
-    'opensubdiv-3.5.0.x.0',
-    'openvdb',
-    'optix-7.3.0.x',
-    'qt',
-    'random123-1.08.3',
-    'tbb',
-    'usd_core',
-    'usd_imaging',
-    'uuid-1.0.0',
-    'zlib-1.2.8.x.2'
+    'libmicrohttpd-0.9.37',
+    'log4cplus-1.1.2',
+    'jsoncpp',
+    'random123',
+    'blosc-1.17.0',
+    'tbb-2019.6',
+    'boost-1.76.0',
+    'libjpeg',
+    'libtiff',
+    'openexr-3.1.5',
+    'oidn-1.4.3',
+    'ocio-2.1.1',
+    'oiio-2.3.15.0.sse.2',
+    'OpenSubdiv-3.5.0',
+    'openvdb-9.1.0',
+    'usd-22.11',
+    'qt-5.14.1',
 ]
 
 private_build_requires = [
-    'cmake',
-    'cmake_modules',
-    'cppunit-1.15.1.x',
-    'ispc-1.14.1.x',
-    'python-2.7|3.7|3.9'
+    'cppunit-1.15.0',
+    'ispc-1.14.1',
+    'python-3.9'
 ]
 
+variants = [
+    ["platform-linux", "arch-x86_64", "os-centos-7"],
+]
+
+# If want to use Ninja, run:
+# rez-build -i --cmake-build-system "ninja"
+# rez-release --cmake-build-system "ninja"
+#
+# Pass cmake arguments (with debug symbols):
+# rez-build -i -- -DBoost_NO_BOOST_CMAKE=On -DBoost_NO_SYSTEM_PATHS=True
+# rez-release -- -DBoost_NO_BOOST_CMAKE=On -DBoost_NO_SYSTEM_PATHS=True
+
+def pre_build_commands():
+    command("source /opt/rh/devtoolset-6/enable")
+
 def commands():
-    prependenv('ARRAS_SESSION_PATH', '{root}/sessions')
-    prependenv('CMAKE_PREFIX_PATH', '{root}')
-    prependenv('HOUDINI_PATH', '{root}/houdini')
-    prependenv('HDMOONRAY_DOUBLESIDED', '1')
-    prependenv('LD_LIBRARY_PATH', '{root}/lib64')
-    prependenv('MOONRAY_CLASS_PATH', '{root}/coredata')
-    prependenv('MOONRAY_DSO_PATH', '{root}/rdl2dso')
-    prependenv('PATH', '{root}/bin')
-    prependenv('PXR_PLUGIN_PATH', '{root}/plugin')
-    prependenv('PXR_PLUGIN_PATH', '{root}/adapters')
-    prependenv('PYTHONPATH', '{root}/python/lib/$PYTHON_NAME')
-    prependenv('RDL2_DSO_PATH', '{root}/rdl2dso')
+    env.ARRAS_SESSION_PATH.prepend('{root}/sessions')
+    # env.CMAKE_PREFIX_PATH.prepend('{root}')
+    env.HDMOONRAY_DOUBLESIDED.prepend('1')
+    env.MOONRAY_CLASS_PATH.prepend('{root}/coredata')
+    env.MOONRAY_DSO_PATH.prepend('{root}/rdl2dso')
+    env.RDL2_DSO_PATH.prepend('{root}/rdl2dso')
 
-uuid = '7f6d2e07-4a15-4a50-87d6-9535e05d1f93'
+    env.PXR_PLUGIN_PATH.prepend('{root}/plugin')
+    env.PXR_PLUGIN_PATH.prepend('{root}/adapters')
 
-config_version = 0
+    env.PATH.prepend('{root}/bin')
+    env.LD_LIBRARY_PATH.prepend('{root}/lib64')
+    env.PYTHONPATH.prepend('{root}/python/lib/')
+
+    env.HOUDINI_PATH.prepend('{root}/houdini')
